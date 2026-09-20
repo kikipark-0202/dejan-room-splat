@@ -22,6 +22,8 @@
     border:0; border-radius:10px; background:#2f6fed; color:#fff; cursor:pointer; }
   button:hover { background:#1f57c8; }
   button.gray { background:#3a4657; }
+  .spin-buttons { display:flex; gap:7px; }
+  .spin-buttons button { flex:1; }
   .row { display:flex; justify-content:space-between; padding:3px 0; font-size:13px; }
   .row .k { color:#9fb0c6; }
   .row .v { font-variant-numeric:tabular-nums; font-weight:700; }
@@ -69,9 +71,12 @@
     <option value="slide">이동 — beta 를 0~0.5 m 로 바꿔 x축 이동 (서랍)</option>
     <option value="tilt">기울기 — beta·gamma 그대로 x·z축 회전 (샌드백·의자)</option>
   </select>
-  <label><input id="spinTower" type="checkbox" checked style="width:auto; margin-right:6px">캣타워 계속 회전</label>
   <label>회전 속도 (도/초)</label>
   <input id="spinSpeed" type="number" value="18" min="0" max="180" step="1">
+  <div class="spin-buttons">
+    <button id="turnTower">Turn the tower!</button>
+    <button id="stopTower" class="gray">Stop</button>
+  </div>
   <button id="loadBtn">장면 불러오기</button>
 
   <h2>③ MQTT 연결</h2>
@@ -154,6 +159,7 @@ let 오브젝트 = null;    // THREE.Group — 안에 GLB/스플랫/박스가 �
 let mixer = null;
 let 자동회전각 = 0;
 let 오브젝트중심 = new THREE.Vector3();
+let 자동회전중 = false;
 
 function 지우기(o) { if (o) { scene.remove(o); if (o.dispose) o.dispose(); } }
 
@@ -215,6 +221,8 @@ async function 장면불러오기() {
   $('로딩').style.display = 'none';
 }
 $('loadBtn').addEventListener('click', 장면불러오기);
+$('turnTower').addEventListener('click', () => { 자동회전중 = true; });
+$('stopTower').addEventListener('click', () => { 자동회전중 = false; });
 장면불러오기();
 
 /* =====================================================================
@@ -238,7 +246,7 @@ function 센서반영(d) {
 const clock = new THREE.Clock();
 renderer.setAnimationLoop(() => {
   const delta = clock.getDelta();
-  if ($('spinTower').checked) {
+  if (자동회전중) {
     자동회전각 = (자동회전각 + THREE.MathUtils.degToRad(parseFloat($('spinSpeed').value) || 0) * delta) % (Math.PI * 2);
   }
   const k = 0.15;                                   // 👉 1 이면 즉시 반응(떨림), 0.05 면 느긋
