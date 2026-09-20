@@ -62,7 +62,7 @@
   <label>오브젝트 파일 주소</label>
   <input id="objUrl" value="Cat-tower-1.glb">
   <label>오브젝트 위치 x, y, z (m) · 크기 배율</label>
-  <input id="objPos" value="-1.6718, -1.3245, 0.5352, 0.88">
+  <input id="objPos" value="0, 0, 0, 0.88">
   <label>센서 값 → 움직임</label>
   <select id="mapMode">
     <option value="rotate">회전 — beta 를 0~90° 로 잘라 y축 회전 (문·뚜껑)</option>
@@ -128,13 +128,13 @@ const 토픽센서 = id => `khu/pcomp/${id}/sensor`;          // 폰/ESP32 → �
 const $ = id => document.getElementById(id);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.05, 200);
-camera.position.set(2.5, 1.6, 3.5);
+camera.position.set(4.1718, 2.9245, 2.9648);
 const renderer = new THREE.WebGLRenderer({ antialias: false });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.target.set(-1.1, -0.43, 1.56);
+controls.target.set(0.5718, 0.8945, 1.0248);
 
 scene.add(new SparkRenderer({ renderer }));                 // 스플랫은 이 한 줄이 그립니다
 scene.add(new THREE.AmbientLight(0xffffff, 0.9));           // 스플랫은 조명이 필요 없지만 GLB 는 필요합니다
@@ -171,6 +171,7 @@ async function 장면불러오기() {
       onLoad: () => { $('로딩').textContent = '오브젝트를 불러오는 중…'; }
     });
     배경.quaternion.set(1, 0, 0, 0);
+    배경.position.set(1.6718, 1.3245, -0.5352);
     scene.add(배경);
   }
 
